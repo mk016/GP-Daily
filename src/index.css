@@ -1,41 +1,44 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Add global background color */
+/* Custom base styles */
 @layer base {
   body {
     @apply bg-[#FFFBEB];
   }
 }
 
-/* Add card background utility class */
-@layer utilities {
+/* Custom components */
+@layer components {
   .card-background {
     @apply bg-[#FFFBEB];
   }
 }
 
+/* Custom utilities */
 @layer utilities {
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-x: hidden;
-      scrollbar-width: none;
-    }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  @layer utilities {
-    .line-clamp-1 {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
+  
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
   
