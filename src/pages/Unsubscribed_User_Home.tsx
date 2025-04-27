@@ -7,7 +7,7 @@ import logo from '../assets/All/logo.png'
 import Banner1 from '../assets/Banner/Banner1.png'
 import Banner2 from '../assets/Banner/Banner1.png'
 import Banner3 from '../assets/Banner/Banner1.png'
-import StoryImage from '../assets/Banner/story.png'
+import StoryImage from '../assets/Banner/Story.png'
 import { useNavigate } from 'react-router-dom';
 import { productService } from '../services/product.service';
 import Delivered from '../assets/icon/Frame.png'
