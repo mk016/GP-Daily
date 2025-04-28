@@ -78,7 +78,7 @@ function Unsubscribed_User_Home() {
           <img 
               src={searchImage} 
               alt="search" 
-              className="w-8 h-8 md:w-8 md:h-8 md:mb-1" 
+              className="w-6 h-6 sm:w-8 sm:h-8 md:w-8 md:h-8 mb-1 sm:mb-4 md:mb-4" 
               onClick={() => navigate('/search')}
             />
             <button onClick={() => navigate('/wallet')} className="w-12 h-12 mb-2 md:w-14 md:h-14">
@@ -265,7 +265,7 @@ function Unsubscribed_User_Home() {
 
         {/* Our Story */}
         <div className="px-4 mt-8 md:px-6">
-          <h2 className="font-['Inter'] text-[28px] font-[400] mb-4 leading-[65.53px]">Our Story</h2>
+          <h2 className=" text-[28px] font-[400] mb-4 leading-[65.53px]">Our Story</h2>
           <div className="p-4 rounded-lg overflow-hidden max-w-sm mx-auto md:max-w-2xl">
             <img src={StoryImage} alt="Our Story" className="w-full rounded-t-lg" />
             <p className="font-['Inter'] text-[16px] font-[400] leading-[30.53px] bg-white rounded-b-lg p-4 md:p-6">

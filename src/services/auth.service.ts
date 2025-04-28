@@ -47,12 +47,13 @@ export const authService = {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('phoneNumber', phoneNumber);
       }
-      
+     
       return response.data;
     } catch (error: any) {
       throw error.response?.data || error;
     }
   },
+  
 
   /**
    * Completes user onboarding by updating their full name
@@ -125,4 +126,5 @@ export const authService = {
     localStorage.removeItem('phoneNumber'); 
     localStorage.removeItem('userName');
   }
-}; 
+};
+
