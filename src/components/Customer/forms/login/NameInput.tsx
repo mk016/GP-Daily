@@ -11,34 +11,59 @@ const NameInput: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>('');
+  const [gender, setGender] = useState<'MALE' | 'FEMALE' | 'OTHER' | ''>('');
   const [customGender, setCustomGender] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    gender?: string;
+  }>({});
   const [error, setError] = useState('');
 
-  const handleSubmit = async () => {
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+
+    // First name validation
     if (!firstName.trim()) {
-      toast.error('Please enter your first name');
-      return;
+      newErrors.firstName = 'First name is required';
+    } else if (firstName.trim().length < 3) {
+      newErrors.firstName = 'First name must be at least 3 characters';
+    } else if (firstName.trim().length > 20) {
+      newErrors.firstName = 'First name must be at most 20 characters';
     }
-    
+
+    // Last name validation
     if (!lastName.trim()) {
-      toast.error('Please enter your last name');
-      return;
+      newErrors.lastName = 'Last name is required';
+    } else if (lastName.trim().length < 3) {
+      newErrors.lastName = 'Last name must be at least 3 characters';
+    } else if (lastName.trim().length > 20) {
+      newErrors.lastName = 'Last name must be at most 20 characters';
     }
 
-    if (!email.trim()) {
-      toast.error('Please enter your email');
-      return;
+    // Email validation
+    if (email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        newErrors.email = 'Invalid email address';
+      }
     }
-    
+
+    // Gender validation
     if (!gender) {
-      toast.error('Please select your gender');
-      return;
+      newErrors.gender = 'Please select your gender';
+    } else if (gender === 'OTHER' && !customGender.trim()) {
+      newErrors.gender = 'Please specify your gender';
     }
 
-    if (gender === 'other' && !customGender.trim()) {
-      toast.error('Please specify your gender');
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
       return;
     }
 
@@ -55,12 +80,16 @@ const NameInput: React.FC = () => {
         return;
       }
 
-      const fullName = `${firstName.trim()} ${lastName.trim()}`;
-      const response = await authService.completeOnboarding(fullName.trim());
+      const response = await authService.completeOnboarding(
+        firstName.trim(),
+        lastName.trim(),
+        email.trim(),
+        gender === 'OTHER' ? customGender : gender
+      );
       
       if (response.success) {
-        localStorage.setItem('userName', fullName.trim());
-        localStorage.setItem('userGender', gender === 'other' ? customGender : gender);
+        localStorage.setItem('userName', response.userName || `${firstName.trim()} ${lastName.trim()}`);
+        localStorage.setItem('userGender', gender === 'OTHER' ? customGender : gender);
         localStorage.setItem('userEmail', email.trim());
         localStorage.setItem('needLocation', 'true');
         toast.success('Profile details saved successfully!');
@@ -109,10 +138,18 @@ const NameInput: React.FC = () => {
             <input
               type="text"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Enter your full name"
-              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors"
+              onChange={(e) => {
+                setFirstName(e.target.value);
+                if (errors.firstName) {
+                  setErrors(prev => ({ ...prev, firstName: undefined }));
+                }
+              }}
+              placeholder="Enter your first name"
+              className={`w-full px-4 py-3 bg-white border ${errors.firstName ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors`}
             />
+            {errors.firstName && (
+              <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
+            )}
           </div>
 
           <div>
@@ -120,10 +157,18 @@ const NameInput: React.FC = () => {
             <input
               type="text"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Enter your email address"
-              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors"
+              onChange={(e) => {
+                setLastName(e.target.value);
+                if (errors.lastName) {
+                  setErrors(prev => ({ ...prev, lastName: undefined }));
+                }
+              }}
+              placeholder="Enter your last name"
+              className={`w-full px-4 py-3 bg-white border ${errors.lastName ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors`}
             />
+            {errors.lastName && (
+              <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+            )}
           </div>
 
           <div>
@@ -131,26 +176,39 @@ const NameInput: React.FC = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Valid Input Only"
-              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) {
+                  setErrors(prev => ({ ...prev, email: undefined }));
+                }
+              }}
+              placeholder="Enter your email (optional)"
+              className={`w-full px-4 py-3 bg-white border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors`}
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-gray-700 mb-3">Gender</label>
             <div className="flex gap-8">
               {[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
-                { value: 'other', label: 'Other' }
+                { value: 'MALE', label: 'Male' },
+                { value: 'FEMALE', label: 'Female' },
+                { value: 'OTHER', label: 'Other' }
               ].map((option) => (
                 <label key={option.value} className="flex items-center gap-2 cursor-pointer">
                   <div className="relative flex items-center justify-center">
                     <input
                       type="radio"
                       checked={gender === option.value}
-                      onChange={() => setGender(option.value as 'male' | 'female' | 'other')}
+                      onChange={() => {
+                        setGender(option.value as 'MALE' | 'FEMALE' | 'OTHER');
+                        if (errors.gender) {
+                          setErrors(prev => ({ ...prev, gender: undefined }));
+                        }
+                      }}
                       className="appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-[#FF5722] transition-colors"
                     />
                     {gender === option.value && (
@@ -161,9 +219,12 @@ const NameInput: React.FC = () => {
                 </label>
               ))}
             </div>
+            {errors.gender && (
+              <p className="mt-1 text-sm text-red-500">{errors.gender}</p>
+            )}
           </div>
 
-          {gender === 'other' && (
+          {gender === 'OTHER' && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -172,9 +233,14 @@ const NameInput: React.FC = () => {
               <input
                 type="text"
                 value={customGender}
-                onChange={(e) => setCustomGender(e.target.value)}
+                onChange={(e) => {
+                  setCustomGender(e.target.value);
+                  if (errors.gender) {
+                    setErrors(prev => ({ ...prev, gender: undefined }));
+                  }
+                }}
                 placeholder="Enter your gender"
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors"
+                className={`w-full px-4 py-3 bg-white border ${errors.gender ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:outline-none focus:border-[#FF5722] transition-colors`}
               />
             </motion.div>
           )}

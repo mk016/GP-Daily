@@ -56,12 +56,15 @@ export const authService = {
   
 
   /**
-   * Completes user onboarding by updating their full name
-   * @param fullName - User's full name
+   * Completes user onboarding by updating their profile information
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @param email - User's email address
+   * @param gender - User's gender (MALE, FEMALE, OTHER)
    * @returns Response data from the server
    * @throws Error if token missing or request fails
    */
-  async completeOnboarding(fullName: string) {
+  async completeOnboarding(firstName: string, lastName: string, email: string, gender: string) {
     try {
       const token = localStorage.getItem('token');
       
@@ -73,8 +76,13 @@ export const authService = {
       }
       
       const response = await axios.post(
-        `${API_URL}/onboarding`,
-        { fullName },
+        `${API_URL}/create-customer`,
+        { 
+          firstName, 
+          lastName, 
+          email, 
+          gender: gender.toUpperCase() 
+        },
         {
           headers: {
             'Authorization': token,
@@ -83,23 +91,25 @@ export const authService = {
         }
       );
       
-      if (response.data.message === 'Full name updated successfully') {
+      if (response.data.message === 'User created successfully' || response.data.message === 'Profile updated successfully') {
         return {
           success: true,
-          message: 'Full name updated successfully'
+          message: response.data.message,
+          userName: response.data.userName,
+          customerID: response.data.customerID
         };
       }
       
       return {
         success: false,
-        error: response.data.message || 'Failed to update name'
+        error: response.data.message || 'Failed to update profile'
       };
       
     } catch (error) {
       if (axios.isAxiosError(error)) {
         return { 
           success: false, 
-          error: error.response?.data?.message || 'Failed to complete onboarding'
+          error: error.response?.data?.error || 'Failed to complete onboarding'
         };
       }
       return {

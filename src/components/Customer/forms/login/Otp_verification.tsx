@@ -94,7 +94,10 @@ const OTPVerification: React.FC = () => {
 
   const handleVerify = async () => {
     const otpString = otp.join('');
-    if (otpString.length !== 6 || !phoneNumber) return;
+    if (otpString.length !== 6 || !phoneNumber) {
+      setError('Please fill all OTP digits');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -112,7 +115,7 @@ const OTPVerification: React.FC = () => {
           if (response.userName) {
             localStorage.setItem('userName', response.userName);
           }
-          navigate('/location', { 
+          navigate('/home', { 
             state: { 
               returnUrl: '/home' 
             } 
@@ -194,6 +197,7 @@ const OTPVerification: React.FC = () => {
                   onPaste={(e) => handlePaste(e)}
                   className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 border border-gray-300 rounded-lg text-center text-lg sm:text-xl font-semibold focus:border-[#FF5722] focus:outline-none transition-all duration-200 bg-white"
                   disabled={isSubmitting}
+                  required
                 />
               ))}
             </div>

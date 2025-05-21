@@ -233,45 +233,47 @@ const Addresses: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {addresses.map((address) => (
+                {addresses.sort((a, b) => (b.isDefault as any) - (a.isDefault as any)).map((address) => (
                   <div
                     key={address.id}
-                    className="bg-white rounded-xl p-4 shadow-sm"
+                    className="bg-white rounded-xl p-4 sm:p-6 shadow-sm sm:shadow-md"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-3">
-                          <h3 className="text-xl font-medium text-gray-900">{address.type}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900">{address.type}</h3>
                           {address.isDefault && (
-                            <span className="text-xs bg-[#ECFDF5] text-[#015D3A] px-2 py-1 rounded-full">
+                            <span className="text-[10px] sm:text-xs bg-[#E0F2F7] text-[#0E7490] px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full font-medium">
                               Default
                             </span>
                           )}
-                          <div className="w-8 h-8 bg-[#ECFDF5] rounded-full flex items-center justify-center">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#ECFDF5] rounded-full flex items-center justify-center">
                             {address.type === 'Home' ? (
-                              <FaHome className="text-[#015D3A] text-sm" />
+                              <FaHome className="text-[#0E7490] text-[10px] sm:text-xs" />
                             ) : (
-                              <FaBuilding className="text-[#015D3A] text-sm" />
+                              <FaBuilding className="text-[#0E7490] text-[10px] sm:text-xs" />
                             )}
                           </div>
                         </div>
-                        <p className="text-gray-600 text-[15px]">{address.houseNo}, {address.streetName}</p>
-                        <p className="text-gray-600 text-[15px]">{address.area}, {address.city}</p>
-                        <p className="text-gray-600 text-[15px]">{address.state} - {address.pincode}</p>
-                        <p className="text-gray-600 text-[15px] mt-2">+91 {address.phoneNumber}</p>
+                        <p className="text-gray-700 text-xs sm:text-sm">{address.houseNo}, {address.streetName}</p>
+                        <p className="text-gray-700 text-xs sm:text-sm">{address.area}, {address.city}</p>
+                        <p className="text-gray-700 text-xs sm:text-sm">{address.state} - {address.pincode}</p>
+                        <p className="text-gray-700 text-xs sm:text-sm mt-1 sm:mt-2">+91 {address.phoneNumber}</p>
                       </div>
                       {address.coordinates ? (
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                         <AddressMap coordinates={address.coordinates} />
+                        </div>
                       ) : (
-                        <div className="w-32 h-32 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
-                          <FaMapMarkerAlt className="text-gray-400 text-4xl" />
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center">
+                          <FaMapMarkerAlt className="text-gray-500 text-2xl sm:text-3xl" />
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-3 mt-4">
+                    <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-4">
                       <button
                         onClick={() => handleEdit(address)}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 border-2 border-[#015D3A] text-[#015D3A] rounded-full text-[15px] font-medium hover:bg-[#ECFDF5] disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 border border-gray-300 text-gray-700 rounded-full text-xs sm:text-sm font-medium hover:bg-gray-100 disabled:opacity-50 min-w-[80px]"
                         disabled={actionInProgress}
                       >
                         <FaPen className="text-sm" />
@@ -279,7 +281,7 @@ const Addresses: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteClick(address.id)}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 border-2 border-[#F15A22] text-[#F15A22] rounded-full text-[15px] font-medium hover:bg-red-50 disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 border border-red-400 text-red-500 rounded-full text-xs sm:text-sm font-medium hover:bg-red-50 disabled:opacity-50 min-w-[80px]"
                         disabled={actionInProgress}
                       >
                         <FaTrash className="text-sm" />
@@ -289,7 +291,7 @@ const Addresses: React.FC = () => {
                         <button
                           onClick={() => handleSetDefault(address.id)}
                           disabled={actionInProgress}
-                          className="flex-1 bg-[#F15A22] text-white py-3 px-5 rounded-full text-[15px] font-medium hover:bg-[#F15A22]/90 disabled:opacity-50"
+                          className="flex-1 bg-[#F15A22] text-white py-2 sm:py-2.5 px-3 sm:px-5 rounded-full text-xs sm:text-sm font-medium hover:bg-[#F15A22]/90 disabled:opacity-50 min-w-[100px]"
                         >
                           {actionInProgress ? 'Setting...' : 'Set as Default'}
                         </button>

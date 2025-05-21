@@ -60,6 +60,13 @@ import Wallet from '../components/Payment/Wallet/wallet';
 import Refer from '../pages/Refer/Refer';
 import CustomerSupport from '../pages/More/CustomerSupport';
 
+import { Navigate } from 'react-router-dom';
+
+// Component to handle redirection based on authentication status
+const AuthRedirect = () => {
+  const isLoggedIn = !!localStorage.getItem('token'); // Check if token exists in local storage
+  return isLoggedIn ? <Navigate to="/home" replace /> : <Unsubscribed_User_Home />;
+};
 
 const router = createBrowserRouter([
   {
@@ -68,9 +75,9 @@ const router = createBrowserRouter([
     children: [
       // ================== PUBLIC ROUTES ==================
       // Main Pages
-      { path: '/', element: <Unsubscribed_User_Home /> },
-      { path: '/home', element: <Main_Home_page /> },
-      { path: '/NewUser', element: <Unsubscribed_User_Home /> },
+      { path: '/', element: <AuthRedirect /> }, // Use AuthRedirect for the root path
+      { path: '/home', element: <ProtectedRoute><Main_Home_page /></ProtectedRoute> }, // Protect the home page
+      { path: '/NewUser', element: <Unsubscribed_User_Home /> }, // Keep NewUser path as is
       { path: '/Products', element: <Products /> },
       { path: '/product/:id', element: <ProductPage /> },
       { path: '/search', element: <Search /> },

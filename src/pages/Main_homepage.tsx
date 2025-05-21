@@ -15,22 +15,12 @@ import { productService } from '../services/product.service';
 import type { Product as ProductType } from '../services/product.service';
 import { toast } from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
-
-// Import flower images
-// import flower1 from '../assets/A1/A2.jpeg';
-// import flower2 from '../assets/A1/A3.jpeg';
-// import flower3 from '../assets/A1/A4.jpeg';
-// import flower4 from '../assets/A1/A5.jpeg';
-// import flower5 from '../assets/A1/A6.jpeg';
-// import flower6 from '../assets/A1/A7.jpeg';
-// import flower7 from '../assets/A1/A8.jpeg';
-// import lowBalanceImg from '../assets/Low_balance.png';
+import Spinner from '../components/common/Spinner';
 import lowBalance from '../assets/icon/LowBalance.png';
 import WalletIcon from '../assets/icon/Wallet.png'
 import searchImage from '../assets/icon/Search.png'
 import ProfileIcon from '../assets/icon/Profile.png'
 import BottomNavigation from './../components/layout/BottomNav';
-import Spinner from '../components/common/Spinner';
 
 
 interface DayInfo {
@@ -40,153 +30,263 @@ interface DayInfo {
   deliveryStatus?: 'pending' | 'delivered' | 'next';
 }
 
-// interface CartItem {
-//   id: string;
-//   name: string;
-//   price: number;
-//   image: string;
-//   quantity: number;
-// }
+// Static fallback data for BasePacks (at least 5 items)
+const staticFallbackBasePacks: BasePack[] = [
+  {
+    id: 'fallback-basepack-1',
+    name: 'Static Basic Pack',
+    description: 'A static selection of puja flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 50,
+    sellingPricePerPackAlternate: 45,
+    type: 'BASEPACK',
+    contents: [{ id: 'rose-fb', name: 'Static Rose', quantity: 5 }],
+  },
+  {
+    id: 'fallback-basepack-2',
+    name: 'Static Medium Pack',
+    description: 'A static mix for daily prayers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 80,
+    sellingPricePerPackAlternate: 75,
+    type: 'BASEPACK',
+    contents: [{ id: 'marigold-fb', name: 'Static Marigold', quantity: 10 }],
+  },
+  {
+    id: 'fallback-basepack-3',
+    name: 'Static Large Pack',
+    description: 'A large static pack for special occasions.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 120,
+    sellingPricePerPackAlternate: 110,
+    type: 'BASEPACK',
+    contents: [{ id: 'lily-fb', name: 'Static Lily', quantity: 8 }],
+  },
+  {
+    id: 'fallback-basepack-4',
+    name: 'Static Economy Pack',
+    description: 'An affordable static daily pack.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 30,
+    sellingPricePerPackAlternate: 25,
+    type: 'BASEPACK',
+    contents: [{ id: 'mixed-fb', name: 'Static Mixed Flowers', quantity: 15 }],
+  },
+  {
+    id: 'fallback-basepack-5',
+    name: 'Static Premium Pack',
+    description: 'High-quality static flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 150,
+    sellingPricePerPackAlternate: 140,
+    type: 'BASEPACK',
+    contents: [{ id: 'orchid-fb', name: 'Static Orchid', quantity: 3 }],
+  },
+];
 
-// // Extended interface for flower items
-// interface FlowerItem extends BasePack {
-//   category: string;
-//   description: string;
-//   contents: { id: string; name: string; quantity: number; }[];
-// }
+// Static fallback data for Products (at least 5 of each relevant type: Flowers, Leaves, Garlands)
+const staticFallbackProducts: ProductType[] = [
+  {
+    id: 'fallback-flower-1',
+    name: 'Static Red Rose',
+    description: 'Vibrant static red roses.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 15,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['rose', 'red'],
+    weight: 10,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-2',
+    name: 'Static White Lily',
+    description: 'Elegant static white lilies.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 20,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['lily', 'white'],
+    weight: 12,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-3',
+    name: 'Static Mixed Bouquet',
+    description: 'A static bouquet of mixed seasonal flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 25,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'weekly',
+    tags: ['mixed', 'seasonal'],
+    weight: 18,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-4',
+    name: 'Static Sunflowers',
+    description: 'Bright static sunflowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 30,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'weekly',
+    tags: ['sunflower'],
+    weight: 20,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-5',
+    name: 'Static Carnations',
+    description: 'Colourful static carnations.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 10,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['carnation'],
+    weight: 8,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-1',
+    name: 'Static Tulsi Leaves',
+    description: 'Fresh static holy basil leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 5,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['tulsi', 'herbal'],
+    weight: 5,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-2',
+    name: 'Static Curry Leaves',
+    description: 'Aromatic static curry leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 3,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['curry', 'herbal'],
+    weight: 3,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-3',
+    name: 'Static Neem Leaves',
+    description: 'Static neem leaves for medicinal use.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 4,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['neem', 'herbal'],
+    weight: 4,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-4',
+    name: 'Static Mint Leaves',
+    description: 'Refreshing static mint leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 2,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['mint', 'herbal'],
+    weight: 2,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-5',
+    name: 'Static Betel Leaves',
+    description: 'Static betel leaves for puja.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 6,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['betel', 'puja'],
+    weight: 6,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-1',
+    name: 'Static Marigold Garland',
+    description: 'A static garland of marigolds.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 60,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['marigold', 'garland'],
+    weight: 100,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-2',
+    name: 'Static Jasmine Garland',
+    description: 'A fragrant static jasmine garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 80,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['jasmine', 'garland'],
+    weight: 120,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-3',
+    name: 'Static Mixed Flower Garland',
+    description: 'A static garland of mixed flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 70,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['mixed', 'garland'],
+    weight: 110,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-4',
+    name: 'Static Tuberose Garland',
+    description: 'A static tuberose garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 90,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['tuberose', 'garland'],
+    weight: 130,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-5',
+    name: 'Static Daisy Garland',
+    description: 'A static daisy garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 55,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['daisy', 'garland'],
+    weight: 90,
+    isAvailable: true,
+  },
+];
 
-// interface Product {
-//   id: string;
-//   name: string;
-//   description: string;
-//   imageUrl?: string;
-//   sellingPrice: number;
-//   type: string;
-//   allowedSubscriptionType: string;
-//   tags: string[];
-//   weight?: number;
-//   isAvailable: boolean;
-// }
-
-// const BannerSection: React.FC<{ walletBalance: number }> = ({ walletBalance }) => {
-//   const bannerImages1 = [flower1, flower2, flower3, flower4];
-//   const bannerImages2 = [flower5, flower6, flower7, flower1];
-//   const lowBalanceImages = [lowBalanceImg, flower2, flower3]; // Add variety to low balance rotation
-
-//   const [index1, setIndex1] = useState(0);
-//   const [index2, setIndex2] = useState(0);
-//   const [lowBalanceIndex, setLowBalanceIndex] = useState(0);
-
-//   useEffect(() => {
-//     // Continue rotating images even when showing low balance
-//     const interval1 = setInterval(() => {
-//       setIndex1((prev) => (prev + 1) % bannerImages1.length);
-//     }, 3000);
-
-//     const interval2 = setInterval(() => {
-//       setIndex2((prev) => (prev + 1) % bannerImages2.length);
-//     }, 3000);
-
-//     const intervalLowBalance = setInterval(() => {
-//       setLowBalanceIndex((prev) => (prev + 1) % lowBalanceImages.length);
-//     }, 3000);
-
-//     return () => {
-//       clearInterval(interval1);
-//       clearInterval(interval2);
-//       clearInterval(intervalLowBalance);
-//     };
-//   }, []);
-
-//   return (
-//     <div className="max-w-[800px] mx-auto px-4 py-4 grid grid-cols-1 gap-4">
-//       {/* Banner 1 - Conditional Low Balance or Seasonal Collection */}
-//       <div className="relative overflow-hidden rounded-lg shadow-lg w-full h-[200px] md:h-[250px]">
-//         {walletBalance < 100 ? (
-//           // Low Balance Banner with Animation
-//           <motion.div className="relative h-full">
-//             <motion.img
-//               key={`low-balance-${lowBalanceIndex}`}
-//               src={lowBalanceImages[lowBalanceIndex]}
-//               alt="Low Balance Warning"
-//               className="w-full h-full object-cover rounded-lg"
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//               exit={{ opacity: 0 }}
-//               transition={{ duration: 1 }}
-//             />
-//             <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
-//               <div className="px-6 py-4 text-white">
-//                 <h2 className="text-xl sm:text-2xl font-bold mb-2">Low Balance Alert!</h2>
-//                 <p className="text-sm sm:text-base mb-3">Add money to your wallet for seamless shopping</p>
-//                 <div className="flex items-center space-x-2 mb-4">
-//                   <span className="text-xs bg-red-500 px-2 py-1 rounded">Current Balance: ₹{walletBalance}</span>
-//                   <span className="text-xs bg-white/20 px-2 py-1 rounded">Min. Required: ₹100</span>
-//                 </div>
-//                 <motion.button
-//                   whileHover={{ scale: 1.05 }}
-//                   whileTap={{ scale: 0.95 }}
-//                   onClick={() => window.location.href = '/wallet'}
-//                   className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-//                 >
-//                   Add Money
-//                 </motion.button>
-//               </div>
-//             </div>
-//           </motion.div>
-//         ) : (
-//           // Regular Seasonal Collection Banner
-//           <motion.div className="relative h-full">
-//             <motion.img
-//               key={`seasonal-${index1}`}
-//               src={bannerImages1[index1]}
-//               alt="Seasonal Collection"
-//               className="w-full h-full object-cover rounded-lg"
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//               exit={{ opacity: 0 }}
-//               transition={{ duration: 1 }}
-//             />
-//             <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent flex items-center">
-//               <div className="px-6 py-4 text-white">
-//                 <h2 className="text-xl sm:text-2xl font-bold mb-2">Seasonal Collection</h2>
-//                 <p className="text-sm sm:text-base mb-4">Limited Edition Bouquets Available</p>
-//                 <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-//                   Explore Now
-//                 </button>
-//               </div>
-//             </div>
-//           </motion.div>
-//         )}
-//       </div>
-
-//       {/* Banner 2 - Wedding Collection */}
-//       <div className="relative overflow-hidden rounded-lg shadow-lg w-full h-[200px] md:h-[250px]">
-//         <motion.div className="relative h-full">
-//           <motion.img
-//             key={`wedding-${index2}`}
-//             src={bannerImages2[index2]}
-//             alt="Wedding Collection"
-//             className="w-full h-full object-cover rounded-lg"
-//             initial={{ opacity: 0 }}
-//             animate={{ opacity: 1 }}
-//             exit={{ opacity: 0 }}
-//             transition={{ duration: 1 }}
-//           />
-//           <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent flex items-center">
-//             <div className="px-6 py-4 text-white">
-//               <h2 className="text-xl sm:text-2xl font-bold mb-2">Wedding Collection</h2>
-//               <p className="text-sm sm:text-base mb-4">Exclusive Floral Arrangements for Your Special Day</p>
-//               <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-//                 View Collection
-//               </button>
-//             </div>
-//           </div>
-//         </motion.div>
-//       </div>
-//     </div>
-//   );
-// };
+// Static fallback data for subscriptions
+const staticFallbackSubscriptions: Subscription[] = [
+  {
+    id: 'fallback-sub-1',
+    customerId: 'fallback-user',
+    basePackId: 'fallback-basepack-1',
+    basePackDetails: {
+      name: 'Static Puja Pack',
+      description: 'A basic puja flower pack.',
+      imageUrl: 'https://via.placeholder.com/160',
+      contents: [],
+    },
+    startDate: new Date(),
+    status: 'ACTIVE',
+    type: 'DAILY',
+    selectedDays: [],
+    createdAt: new Date(),
+  },
+];
 
 const Home2: React.FC = () => {
   const navigate = useNavigate();
@@ -198,7 +298,6 @@ const Home2: React.FC = () => {
   const [basePacks, setBasePacks] = useState<BasePack[]>([]);
   const [isLoadingPacks, setIsLoadingPacks] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const [, setCartItems] = useState<CartItem[]>([]);
   const [activeSubscriptions, setActiveSubscriptions] = useState<Subscription[]>([]);
   const [isLoadingSubscriptions, setIsLoadingSubscriptions] = useState(true);
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
@@ -233,13 +332,14 @@ const Home2: React.FC = () => {
         setActiveSubscriptions(fetchedSubscriptions);
         setSelectedSubscription(active || null);
       } else {
-        setActiveSubscriptions([]);
-        setSelectedSubscription(null);
+        console.warn('API returned no subscriptions, using static fallback.');
+        setActiveSubscriptions(staticFallbackSubscriptions);
+        setSelectedSubscription(staticFallbackSubscriptions[0] || null); // Select the first static subscription
       }
     } catch (error: any) {
-      console.error('Error fetching subscriptions:', error);
-      setActiveSubscriptions([]);
-      setSelectedSubscription(null);
+      console.error('Error fetching subscriptions, using static fallback:', error);
+      setActiveSubscriptions(staticFallbackSubscriptions);
+      setSelectedSubscription(staticFallbackSubscriptions[0] || null); // Select the first static subscription
     } finally {
       setIsLoadingSubscriptions(false);
     }
@@ -250,15 +350,19 @@ const Home2: React.FC = () => {
       setIsLoadingSubscriptions(true);
       const subscriptions = await subscriptionService.getCustomerSubscriptions();
       const active = subscriptions.filter(sub => sub.status === 'ACTIVE');
-      setActiveSubscriptions(active);
       
-      // If there are active subscriptions, set the first one as selected
       if (active.length > 0) {
+        setActiveSubscriptions(active);
         setSelectedSubscription(active[0]);
+      } else {
+        console.warn('No active subscriptions from API, using static fallback.');
+        setActiveSubscriptions(staticFallbackSubscriptions);
+        setSelectedSubscription(staticFallbackSubscriptions[0] || null); // Select the first static static subscription
       }
     } catch (error) {
-      console.error('Error fetching subscriptions:', error);
-      setActiveSubscriptions([]);
+      console.error('Error fetching active subscriptions, using static fallback:', error);
+      setActiveSubscriptions(staticFallbackSubscriptions);
+      setSelectedSubscription(staticFallbackSubscriptions[0] || null); // Select the first static static subscription
     } finally {
       setIsLoadingSubscriptions(false);
     }
@@ -272,17 +376,26 @@ const Home2: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login', { state: { returnUrl: location.pathname } });
+        // Set static data immediately if not logged in to show something
+        setBasePacks(staticFallbackBasePacks);
         return;
       }
 
       const packs = await basePackService.getAllBasePacks();
+      if (packs && packs.length > 0) {
       setBasePacks(packs);
+      } else {
+        console.warn('API returned no base packs, using static fallback.');
+        setBasePacks(staticFallbackBasePacks);
+      }
     } catch (error: any) {
-      console.error('Error fetching base packs:', error);
+      console.error('Error fetching base packs, using static fallback:', error);
       if (error.message === 'Authentication required' || error.message.includes('Session expired')) {
         navigate('/login', { state: { returnUrl: location.pathname } });
       } else {
-        setError(error.message || 'Failed to load base packs');
+        setError(error.message || 'Failed to load base packs. Displaying static data.');
+        // On API error, use static fallback data
+        setBasePacks(staticFallbackBasePacks);
       }
     } finally {
       setIsLoadingPacks(false);
@@ -301,11 +414,17 @@ const Home2: React.FC = () => {
         type: product.type.toUpperCase()
       }));
 
-
+      if (normalizedProducts && normalizedProducts.length > 0) {
       setProducts(normalizedProducts);
+      } else {
+        console.warn('API returned no products, using static fallback.');
+        setProducts(staticFallbackProducts);
+      }
+
     } catch (error) {
-      console.error('Error fetching products:', error);
-      setProducts([]);
+      console.error('Error fetching products, using static fallback:', error);
+      // On API error, use static fallback data
+      setProducts(staticFallbackProducts);
     } finally {
       setIsLoadingProducts(false);
     }
@@ -407,27 +526,6 @@ const Home2: React.FC = () => {
   };
 
 
-  // const removeFromCart = (itemId: string) => {
-  //   setCartItems(prev => {
-  //     const newCart = prev.filter(item => item.id !== itemId);
-  //     localStorage.setItem('cartItems', JSON.stringify(newCart));
-  //     return newCart;
-  //   });
-  // };
-
-  // const updateQuantity = (productId: string, newQuantity: number) => {
-  //   if (newQuantity < 1) {
-  //     setCartItems(prev => prev.filter(item => item.id !== productId));
-  //     return;
-  //   }
-  //   setCartItems(prev =>
-  //     prev.map(item =>
-  //       item.id === productId ? { ...item, quantity: newQuantity } : item
-  //     )
-  //   );
-  // };
-
-
   const handlePause = async () => {
     if (!selectedSubscription || !customStartDate) return;
 
@@ -472,45 +570,45 @@ const Home2: React.FC = () => {
       <div className="min-h-screen bg-[#FFFBEB] pb-20 lg:pb-0">
         <div className="max-w-[800px] mx-auto">
           {/* Header */}
-          <header className="p-4 md:p-6 bg-[#FFFBEB] z-50">
-            <div className="flex items-center justify-between max-w-[800px] mx-auto">
-              <div className="flex-1">
+          <header className="p-2 sm:p-4 md:p-6 bg-[#FFFBEB] z-50 w-full">
+            <div className="flex items-center justify-between w-full max-w-[800px] mx-auto">
+              <div className="flex-1 min-w-0">
                 {/* Location section */}
                 <motion.div
-                  className="flex items-center space-x-2 cursor-pointer"
+                  className="flex items-center space-x-1 sm:space-x-2 cursor-pointer"
                   whileHover={{ scale: 1.02 }}
                   onClick={() => navigate('/location')}
                 >
-                  <MdLocationOn className="text-[#015D3A] text-xl mt-4" />
-                  <span className="text-[#64748B] text-lg mt-4">Delivering to Home</span>
+                  <MdLocationOn className="text-[#015D3A] text-lg sm:text-xl mt-2 sm:mt-4" />
+                  <span className="text-[#64748B] text-base sm:text-lg mt-2 sm:mt-4">Delivering to Home</span>
                 </motion.div>
-                <div className="text-[#64748B] text-base ml-5">
+                <div className="text-[#64748B] text-xs sm:text-sm ml-4 sm:ml-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] xs:max-w-[150px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">
                   {deliveryLocation
                     ? `${deliveryLocation.substring(0, 25)}${deliveryLocation.length > 25 ? '' : ''}`
                     : 'B-149, Shilp Residency, Tarsali'}
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-              <img 
-              src={searchImage} 
-              alt="search" 
-              className="w-6 h-6 md:w-6 md:h-6" 
-              onClick={() => navigate('/search')}
-            />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <img 
+                  src={searchImage} 
+                  alt="search" 
+                  className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
+                  onClick={() => navigate('/search')}
+                />
                 <button
                   onClick={() => navigate('/wallet')}
                   className="flex items-center"
                 >
-                  <img src={WalletIcon} alt="Wallet" className="w-12 h-12" />
-                  <span className="text-[#015D3A] text-xl">₹{walletBalance}</span>
+                  <img src={WalletIcon} alt="Wallet" className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+                  <span className="text-[#015D3A] text-lg sm:text-xl">₹{walletBalance}</span>
                 </button>
 
                 <button
                   onClick={() => navigate('/account')}
                   className="flex items-center justify-center"
                 >
-                  <img src={ProfileIcon} alt="Profile" className="w-10 h-10" />
+                  <img src={ProfileIcon} alt="Profile" className="w-8 h-8 sm:w-4 sm:h-4 md:w-10 md:h-10" />
                 </button>
               </div>
             </div>
@@ -656,25 +754,20 @@ const Home2: React.FC = () => {
                 </button>
               </div>
 
-              {isLoadingPacks && (
+              {isLoadingPacks ? (
                 <div className="flex justify-center items-center h-40">
                   <Spinner size={400} />
                 </div>
-              )}
-
-              {error && (
-                <div className="text-red-500 text-center py-4">
-                  {error}
-                </div>
-              )}
-
-              {/* Card Layout Template - Used for all sections */}
-              {!isLoadingPacks && !error && (
+              ) : (
                 <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4">
-                  {basePacks.map(pack => (
+                   {/* Show message if no packs and no error, otherwise map packs */}
+                   {!error && basePacks.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 w-full">No base packs available at the moment</div>
+                  ) : (
+                    basePacks.map(pack => (
                     <div
                       key={pack.id}
-                      className="flex-shrink-0 w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
+                        className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
                       onClick={() => handleProductClick(pack as unknown as ProductType)}
                     >
                       <div className="p-3">
@@ -701,7 +794,8 @@ const Home2: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               )}
             </div>
@@ -718,13 +812,13 @@ const Home2: React.FC = () => {
                 <div className="flex justify-center items-center h-40">
                   <Spinner size={400} />
                 </div>
-              ) : products.filter(item => item.type === 'FLOWERS').length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No flowers available at the moment
-                </div>
               ) : (
                 <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4">
-                  {products
+                   {/* Show message if no flowers and no error, otherwise map flowers */}
+                   {!error && products.filter(item => item.type === 'FLOWERS').length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 w-full">No flowers available at the moment</div>
+                  ) : (
+                    products
                     .filter(item => item.type === 'FLOWERS' && item.isAvailable)
                     .map(item => (
                       <div
@@ -756,7 +850,8 @@ const Home2: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ))
+                  )}
                 </div>
               )}
             </div>
@@ -830,8 +925,12 @@ const Home2: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4">
-                  {products
-                    .filter(item => item.type === 'GARLAND')
+                   {/* Show message if no garlands and no error, otherwise map garlands */}
+                   {!error && products.filter(item => item.type === 'GARLAND').length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 w-full">No garlands available at the moment</div>
+                  ) : (
+                    products
+                    .filter(item => item.type === 'GARLAND' && item.isAvailable)
                     .map(item => (
                       <div
                         key={item.id}
@@ -862,7 +961,8 @@ const Home2: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ))
+                  )}
                 </div>
               )}
             </div>

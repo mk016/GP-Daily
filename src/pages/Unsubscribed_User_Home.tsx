@@ -34,6 +34,53 @@ interface Product {
   isAvailable: boolean;
 }
 
+const staticFallbackProducts: Product[] = [
+  {
+    id: 'fallback-flower-1',
+    name: 'Static Rose Pack',
+    description: 'A beautiful pack of fresh roses.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 99,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['rose', 'flower'],
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-2',
+    name: 'Static Lily Bunch',
+    description: 'Elegant lilies for your home.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 149,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'weekly',
+    tags: ['lily', 'flower'],
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-1',
+    name: 'Static Puja Leaves',
+    description: 'Fresh leaves for daily rituals.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 49,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['puja', 'leaves'],
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-2',
+    name: 'Static Herbal Leaves',
+    description: 'A mix of beneficial herbal leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 79,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'weekly',
+    tags: ['herbal', 'leaves'],
+    isAvailable: true,
+  },
+];
+
 function Unsubscribed_User_Home() {
   const navigate = useNavigate();
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -49,9 +96,17 @@ function Unsubscribed_User_Home() {
       try {
         setIsLoadingProducts(true);
         const data = await productService.getAllProducts();
+        if (data && data.length > 0) {
         setProducts(data);
+        } else {
+          // If API returns empty or null data, use fallback
+          console.warn('API returned no products, using static fallback.');
+          setProducts(staticFallbackProducts);
+        }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching products, using static fallback:', error);
+        // On API error, use static fallback data
+        setProducts(staticFallbackProducts);
       } finally {
         setIsLoadingProducts(false);
       }
@@ -299,7 +354,7 @@ function Unsubscribed_User_Home() {
                   .map(item => (
                     <div
                       key={item.id}
-                      className="flex-shrink-0 w-[160px] md:w-[200px] h-[280px] md:h-[320px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
+                      className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
                       onClick={() => handleProductClick(item)}
                     >
                       <div className="p-3">
@@ -354,7 +409,7 @@ function Unsubscribed_User_Home() {
                   .map(item => (
                     <div
                       key={item.id}
-                      className="flex-shrink-0 w-[160px] md:w-[200px] h-[280px] md:h-[320px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
+                      className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer"
                       onClick={() => handleProductClick(item)}
                     >
                       <div className="p-3">

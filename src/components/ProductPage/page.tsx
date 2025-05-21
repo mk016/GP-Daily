@@ -204,7 +204,7 @@ const ProductPage: React.FC = () => {
                       {sortProducts(basePacks, sortBy).map(pack => (
                         <div
                           key={pack.id}
-                          className="flex-shrink-0 w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                          className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                           onClick={() => handleProductClick(pack)}
                         >
                           <div className="p-3">
@@ -244,7 +244,7 @@ const ProductPage: React.FC = () => {
                       {sortProducts(products.filter(item => item.type === 'FLOWERS'), sortBy).map(item => (
                         <div
                           key={item.id}
-                          className="flex-shrink-0 w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                          className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                           onClick={() => handleProductClick(item)}
                         >
                           <div className="p-3">
@@ -284,7 +284,7 @@ const ProductPage: React.FC = () => {
                       {sortProducts(products.filter(item => item.type === 'LEAVES'), sortBy).map(item => (
                         <div
                           key={item.id}
-                          className="flex-shrink-0 w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                          className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                           onClick={() => handleProductClick(item)}
                         >
                           <div className="p-3">
@@ -324,7 +324,7 @@ const ProductPage: React.FC = () => {
                       {sortProducts(products.filter(item => item.type === 'GARLAND'), sortBy).map(item => (
                         <div
                           key={item.id}
-                          className="flex-shrink-0 w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                          className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                           onClick={() => handleProductClick(item)}
                         >
                           <div className="p-3">
@@ -359,11 +359,11 @@ const ProductPage: React.FC = () => {
 
               {/* Exotic Flowers - Shows all products */}
               {activeTab === 'Exotic Flowers' && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {sortProducts([...products, ...basePacks], sortBy).map(item => (
                     <div
                       key={item.id}
-                      className="w-[160px] md:w-[180px] h-[280px] md:h-[300px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                      className="flex-shrink-0 w-[160px] h-[280px] bg-white rounded-3xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                       onClick={() => handleProductClick(item)}
                     >
                       <div className="p-3">
@@ -374,22 +374,22 @@ const ProductPage: React.FC = () => {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="pt-1 pb-2 px-1 space-y-2">
-                          <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                          <p className="text-[14px] text-gray-500 truncate">{'type' in item ? item.type : 'Basepack'}</p>
-                          <p className="text-pink-600 text-[16px] font-bold">₹{getItemPrice(item)}/Day</p>
+                        <div className="pt-1 px-1 space-y-2">
+                          <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                          <p className="text-[12px] text-gray-500 truncate">{'type' in item ? item.type : 'Basepack'}</p>
+                          <p className="text-pink-600 text-[14px] font-bold mb-4">₹{getItemPrice(item)}/Day</p>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleProductClick(item);
                             }}
-                            className="text-white bg-[#F97316] text-sm rounded-full mb-3 p-1 px-4 py-2 text-[10px]"
+                            className="block w-24 text-center text-white bg-[#F97316] text-sm rounded-full px-2 py-2 text-[10px] "
                           >
                             Subscribe
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </div> 
                   ))}
                 </div>
               )}
