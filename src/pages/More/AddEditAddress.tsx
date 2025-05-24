@@ -29,6 +29,7 @@ const AddEditAddress: React.FC = () => {
     state: '',
     pincode: '',
     phoneNumber: '',
+    district: '',
     type: 'Home' as 'Home' | 'Work' | 'Others'
   });
 
@@ -45,7 +46,8 @@ const AddEditAddress: React.FC = () => {
         city: existingAddress.city || '',
         state: existingAddress.state || '',
         pincode: existingAddress.pincode || '',
-        phoneNumber: existingAddress.phoneNumber || '',
+        phoneNumber: existingAddress.associatedPhoneNumber || '',
+        district: existingAddress.district || '',
         type: existingAddress.type || 'Home'
       });
       setSelectedType(existingAddress.type || 'Home');
@@ -84,16 +86,23 @@ const AddEditAddress: React.FC = () => {
     try {
       setIsSubmitting(true);
       const addressData = {
-        ...formData,
-        type: selectedType,
-        coordinates: `${selectedPosition.lat},${selectedPosition.lng}`
+        name: localStorage.getItem('userName') || undefined,
+        houseNo: formData.houseNo,
+        streetName: formData.streetName,
+        area: formData.area,
+        associatedPhoneNumber: formData.phoneNumber || null,
+        coordinates: `${selectedPosition.lat},${selectedPosition.lng}`,
+        pincode: formData.pincode,
+        city: formData.city,
+        district: formData.district,
+        state: formData.state,
       };
 
       if (isEdit && existingAddress?.id) {
         await addressService.updateAddress(existingAddress.id, addressData);
         toast.success('Address updated successfully');
       } else {
-        await addressService.createAddress(addressData);
+        await addressService.createAddress(addressData as any);
         toast.success('Address added successfully');
       }
       navigate('/addresses');
@@ -117,7 +126,7 @@ const AddEditAddress: React.FC = () => {
           
           try {
             const response = await fetch(
-              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
             );
             const data = await response.json();
             
@@ -139,16 +148,16 @@ const AddEditAddress: React.FC = () => {
                 ...prev,
                 ...formattedAddress
               }));
-              toast.success('Location detected successfully');
+
             }
           } catch (error) {
             console.error('Error fetching address:', error);
-            toast.error('Failed to fetch location details');
+
           }
         },
         (error) => {
           console.error('Error accessing location:', error);
-          toast.error('Failed to access location');
+
         }
       );
     } else {

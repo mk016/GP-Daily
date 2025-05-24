@@ -95,7 +95,7 @@ const OTPVerification: React.FC = () => {
   const handleVerify = async () => {
     const otpString = otp.join('');
     if (otpString.length !== 6 || !phoneNumber) {
-      setError('Please fill all OTP digits');
+      setError('');
       return;
     }
 

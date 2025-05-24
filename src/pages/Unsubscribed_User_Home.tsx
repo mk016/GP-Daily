@@ -366,15 +366,15 @@ function Unsubscribed_User_Home() {
                           />
                         </div>
                         <div className="pt-3 pb-2 px-1 space-y-2">
-                          <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                          <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                          <p className="text-pink-600 text-[16px] font-bold">₹{item.sellingPrice}/Day</p>
+                          <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                          <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                          <p className="text-pink-600 text-[14px] font-bold">₹{item.sellingPrice}/Day</p>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleProductClick(item);
                             }}
-                            className="text-green-600 text-[16px] mb-3 font-medium block"
+                            className="text-green-600 text-[14px] mb-3 font-medium block"
                           >
                             View
                           </button>
@@ -421,15 +421,15 @@ function Unsubscribed_User_Home() {
                           />
                         </div>
                         <div className="pt-3 pb-2 px-1 space-y-2">
-                          <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                          <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                          <p className="text-pink-600 text-[16px] font-bold">₹{item.sellingPrice}/Day</p>
+                          <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                          <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                          <p className="text-pink-600 text-[14px] font-bold">₹{item.sellingPrice}/Day</p>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleProductClick(item);
                             }}
-                            className="text-green-600 text-[16px] mb-3 font-medium block"
+                            className="text-green-600 text-[14px] mb-3 font-medium block"
                           >
                             View
                           </button>

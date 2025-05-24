@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {  FaPause, FaCalendarPlus } from 'react-icons/fa'; // cart icon FaShoppingCart,
+import {  FaPause, FaCalendarPlus, FaArrowRight } from 'react-icons/fa'; // cart icon FaShoppingCart,
 
 
 import { MdLocationOn } from 'react-icons/md';
@@ -616,7 +616,7 @@ const Home2: React.FC = () => {
 
           {/* Greeting Section */}
           <div className="px-4 md:px-6 py-6">
-            <h1 className="text-2xl md:text-3xl ml-4 font-bold text-gray-800">Namaste, {userName} 🌸</h1>
+            <h1 className="text-2xl md:text-3xl ml-4 font-bold text-gray-800">Namaste, {userName.split(' ')[0]}! 🌸</h1>
             <p className="text-sm md:text-base ml-4 text-gray-600">May your day be blessed!</p>
           </div>
 
@@ -636,7 +636,7 @@ const Home2: React.FC = () => {
                     <p className="text-orange-600 text-sm">Your wallet balance is running low</p>
                   </div>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 mr-4">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -650,19 +650,22 @@ const Home2: React.FC = () => {
             )}
 
             {/* Promo Banner Card */}
-            <div className="bg-white rounded-xl p-7  shadow-sm">
-              <div className="flex justify-between items-center">
+            <div className="bg-white rounded-xl p-7 shadow-sm relative overflow-visible min-h-[170px]">
+              <div className="flex flex-col h-full justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800">Promo Banner</h3>
-                  <p className="text-gray-600">Premium Lotus & Rose Combo</p>
-                  <div className="mt-2">
-                    <span className="text-2xl font-bold text-gray-800">₹399</span>
+                  <h3 className="text-lg md:text-xl font-semibold text-[#22543D] mb-1">Promo Banner</h3>
+                  <p className="text-gray-500 md:text-lg mb-0">Premium Lotus & Rose Combo</p>
+                  <div className="mt-6 md:mt-8">
+                    <span className="text-2xl md:text-3xl font-bold text-[#22543D]">₹399</span>
                   </div>
                 </div>
-                <div className="flex-shrink-0">
-                  <div className="bg-orange-500 text-white px-3 py-1 rounded-full">Icon</div>
-                </div>
               </div>
+              <button
+                className="absolute bottom-6 right-6 w-8 h-8 md:w-14 md:h-14 bg-orange-500 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-600 transition-colors"
+                aria-label="Go to promo"
+              >
+                <FaArrowRight className="text-white text-xl md:text-xl" />
+              </button>
             </div>
           </div>
 
@@ -779,15 +782,15 @@ const Home2: React.FC = () => {
                           />
                         </div>
                         <div className="pt-3 pb-2 px-1 space-y-2">
-                          <h3 className="text-[16px] font-semibold text-gray-900 truncate">{pack.name}</h3>
-                          <p className="text-[14px] text-gray-500 truncate">{pack.description}</p>
-                          <p className="text-pink-600 text-[16px] font-bold">₹{pack.sellingPricePerPackDaily}/Day</p>
+                          <h3 className="text-[14px] font-semibold text-gray-900 truncate">{pack.name}</h3>
+                          <p className="text-[12px] text-gray-500 truncate">{pack.description}</p>
+                          <p className="text-pink-600 text-[14px] font-bold">₹{pack.sellingPricePerPackDaily}/Day</p>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleProductClick(pack as unknown as ProductType);
                             }}
-                            className="text-green-600 text-[16px] mb-3 font-medium block"
+                            className="text-green-600 text-[14px] mb-3 font-medium block"
                           >
                             View
                           </button>
@@ -835,15 +838,15 @@ const Home2: React.FC = () => {
                             />
                           </div>
                           <div className="pt-3 pb-2 px-1 space-y-2">
-                            <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                            <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                            <p className="text-pink-600 text-[16px] font-bold">₹{item.sellingPrice}/Day</p>
+                            <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                            <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                            <p className="text-pink-600 text-[14px] font-bold">₹{item.sellingPrice}/Day</p>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleProductClick(item);
                               }}
-                              className="text-green-600 text-[16px] mb-3 font-medium block"
+                              className="text-green-600 text-[14px] mb-3 font-medium block"
                             >
                               View
                             </button>
@@ -891,15 +894,15 @@ const Home2: React.FC = () => {
                             />
                           </div>
                           <div className="pt-3 pb-2 px-1 space-y-2">
-                            <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                            <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                            <p className="text-pink-600 text-[16px] font-bold">₹{item.sellingPrice}/Day</p>
+                            <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                            <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                            <p className="text-pink-600 text-[14px] font-bold">₹{item.sellingPrice}/Day</p>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleProductClick(item);
                               }}
-                              className="text-green-600 text-[16px] mb-3 font-medium block"
+                              className="text-green-600 text-[14px] mb-3 font-medium block"
                             >
                               View
                             </button>
@@ -946,15 +949,15 @@ const Home2: React.FC = () => {
                             />
                           </div>
                           <div className="pt-3 pb-2 px-1 space-y-2">
-                            <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                            <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                            <p className="text-pink-600 text-[16px] font-bold">₹{item.sellingPrice}/Day</p>
+                            <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                            <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                            <p className="text-pink-600 text-[14px] font-bold">₹{item.sellingPrice}/Day</p>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleProductClick(item);
                               }}
-                              className="text-green-600 text-[16px] mb-3 font-medium block"
+                              className="text-green-600 text-[14px] mb-3 font-medium block"
                             >
                               View
                             </button>

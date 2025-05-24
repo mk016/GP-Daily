@@ -11,9 +11,10 @@ export interface Address {
   city: string;
   state: string;
   pincode: string;
-  phoneNumber: string;
-  isDefault: boolean;
-  type: 'Home' | 'Work' | 'Others';
+  associatedPhoneNumber?: string | null;
+  name?: string;
+  isDefault?: boolean;
+  type?: 'Home' | 'Work' | 'Others';
   societyName?: string;
   district?: string;
   coordinates?: string;
@@ -82,14 +83,8 @@ class AddressService {
       const response = await axios.get(getAddressesUrl(), {
         headers: this.getHeaders(),
       });
-      
-      // Check if response has the expected structure
-      if (response.data && Array.isArray(response.data.data)) {
-        return response.data.data;
-      } else if (Array.isArray(response.data)) {
-        return response.data;
-      }
-      return [];
+      // Backend returns array directly
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -100,7 +95,8 @@ class AddressService {
       const response = await axios.get(`${getAddressesUrl()}/${id}`, {
         headers: this.getHeaders(),
       });
-      return response.data.data;
+      // Backend returns object directly
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -115,7 +111,8 @@ class AddressService {
           headers: this.getHeaders(),
         }
       );
-      return response.data.data;
+      // Backend returns { address: ... }
+      return response.data.address;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -130,7 +127,8 @@ class AddressService {
           headers: this.getHeaders(),
         }
       );
-      return response.data.data;
+      // Backend returns { address: ... }
+      return response.data.address;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -146,20 +144,21 @@ class AddressService {
     }
   }
 
-  async setDefaultAddress(id: string): Promise<Address> {
-    try {
-      const response = await axios.put(
-        `${getAddressesUrl()}/${id}/default`,
-        {},
-        {
-          headers: this.getHeaders(),
-        }
-      );
-      return response.data.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
+  // setDefaultAddress is not supported by backend, so comment it out
+  // async setDefaultAddress(id: string): Promise<Address> {
+  //   try {
+  //     const response = await axios.put(
+  //       `${getAddressesUrl()}/${id}/default`,
+  //       {},
+  //       {
+  //         headers: this.getHeaders(),
+  //       }
+  //     );
+  //     return response.data.data;
+  //   } catch (error) {
+  //     throw this.handleError(error);
+  //   }
+  // }
 }
 
 export const addressService = new AddressService(); 

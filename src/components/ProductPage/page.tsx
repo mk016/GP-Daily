@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import searchImage from '../../assets/icon/Search.png'
-import { basePackService } from '../../services/basepack.service';
 import type { BasePack } from '../../services/basepack.service';
 import { productService } from '../../services/product.service';
 import type { Product } from '../../services/product.service';
@@ -27,6 +26,247 @@ import Spinner from '../common/Spinner';
 // }
 
 // const CART_STORAGE_KEY = 'gendaphool_cart';
+
+// Static fallback data for BasePacks (at least 5 items)
+const staticFallbackBasePacks: BasePack[] = [
+  {
+    id: 'fallback-basepack-1',
+    name: 'Static Basic Pack',
+    description: 'A static selection of puja flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 50,
+    sellingPricePerPackAlternate: 45,
+    type: 'BASEPACK',
+    contents: [{ id: 'rose-fb', name: 'Static Rose', quantity: 5 }],
+  },
+  {
+    id: 'fallback-basepack-2',
+    name: 'Static Medium Pack',
+    description: 'A static mix for daily prayers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 80,
+    sellingPricePerPackAlternate: 75,
+    type: 'BASEPACK',
+    contents: [{ id: 'marigold-fb', name: 'Static Marigold', quantity: 10 }],
+  },
+  {
+    id: 'fallback-basepack-3',
+    name: 'Static Large Pack',
+    description: 'A large static pack for special occasions.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 120,
+    sellingPricePerPackAlternate: 110,
+    type: 'BASEPACK',
+    contents: [{ id: 'lily-fb', name: 'Static Lily', quantity: 8 }],
+  },
+  {
+    id: 'fallback-basepack-4',
+    name: 'Static Economy Pack',
+    description: 'An affordable static daily pack.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 30,
+    sellingPricePerPackAlternate: 25,
+    type: 'BASEPACK',
+    contents: [{ id: 'mixed-fb', name: 'Static Mixed Flowers', quantity: 15 }],
+  },
+  {
+    id: 'fallback-basepack-5',
+    name: 'Static Premium Pack',
+    description: 'High-quality static flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPricePerPackDaily: 150,
+    sellingPricePerPackAlternate: 140,
+    type: 'BASEPACK',
+    contents: [{ id: 'orchid-fb', name: 'Static Orchid', quantity: 3 }],
+  },
+];
+
+// Static fallback data for Products (at least 5 of each relevant type: FLOWERS, LEAVES, GARLANDS)
+const staticFallbackProducts: Product[] = [
+  // Flowers
+  {
+    id: 'fallback-flower-1',
+    name: 'Static Red Rose',
+    description: 'Vibrant static red roses.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 15,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['rose', 'red'],
+    weight: 10,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-2',
+    name: 'Static White Lily',
+    description: 'Elegant static white lilies.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 20,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['lily', 'white'],
+    weight: 12,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-3',
+    name: 'Static Mixed Bouquet',
+    description: 'A static bouquet of mixed seasonal flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 25,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'weekly',
+    tags: ['mixed', 'seasonal'],
+    weight: 18,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-4',
+    name: 'Static Sunflowers',
+    description: 'Bright static sunflowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 30,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'weekly',
+    tags: ['sunflower'],
+    weight: 20,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-flower-5',
+    name: 'Static Carnations',
+    description: 'Colourful static carnations.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 10,
+    type: 'FLOWERS',
+    allowedSubscriptionType: 'daily',
+    tags: ['carnation'],
+    weight: 8,
+    isAvailable: true,
+  },
+  // Leaves
+  {
+    id: 'fallback-leaf-1',
+    name: 'Static Tulsi Leaves',
+    description: 'Fresh static holy basil leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 5,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['tulsi', 'herbal'],
+    weight: 5,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-2',
+    name: 'Static Curry Leaves',
+    description: 'Aromatic static curry leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 3,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['curry', 'herbal'],
+    weight: 3,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-3',
+    name: 'Static Neem Leaves',
+    description: 'Static neem leaves for medicinal use.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 4,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['neem', 'herbal'],
+    weight: 4,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-4',
+    name: 'Static Mint Leaves',
+    description: 'Refreshing static mint leaves.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 2,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['mint', 'herbal'],
+    weight: 2,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-leaf-5',
+    name: 'Static Betel Leaves',
+    description: 'Static betel leaves for puja.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 6,
+    type: 'LEAVES',
+    allowedSubscriptionType: 'daily',
+    tags: ['betel', 'puja'],
+    weight: 6,
+    isAvailable: true,
+  },
+  // Garlands
+  {
+    id: 'fallback-garland-1',
+    name: 'Static Marigold Garland',
+    description: 'A static garland of marigolds.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 60,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['marigold', 'garland'],
+    weight: 100,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-2',
+    name: 'Static Jasmine Garland',
+    description: 'A fragrant static jasmine garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 80,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['jasmine', 'garland'],
+    weight: 120,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-3',
+    name: 'Static Mixed Flower Garland',
+    description: 'A static garland of mixed flowers.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 70,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['mixed', 'garland'],
+    weight: 110,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-4',
+    name: 'Static Tuberose Garland',
+    description: 'A static tuberose garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 90,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['tuberose', 'garland'],
+    weight: 130,
+    isAvailable: true,
+  },
+  {
+    id: 'fallback-garland-5',
+    name: 'Static Daisy Garland',
+    description: 'A static daisy garland.',
+    imageUrl: 'https://via.placeholder.com/160',
+    sellingPrice: 55,
+    type: 'GARLAND',
+    allowedSubscriptionType: 'weekly',
+    tags: ['daisy', 'garland'],
+    weight: 90,
+    isAvailable: true,
+  },
+];
 
 const ProductPage: React.FC = () => {
   const navigate = useNavigate();
@@ -72,15 +312,18 @@ const ProductPage: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const [packs, prods] = await Promise.all([
-          basePackService.getAllBasePacks(),
-          productService.getAllProducts()
-        ]);
-        setBasePacks(packs);
-        setProducts(prods);
+        const prods = await productService.getAllProducts();
+
+        // Use static fallback if API returns empty or fails
+        setBasePacks(staticFallbackBasePacks);
+        setProducts(prods && prods.length > 0 ? prods : staticFallbackProducts);
+
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to load products');
+        console.error('Error fetching data, using static fallback:', error);
+        setError('Failed to load products. Displaying static data.');
+        // On API error, use static fallback data
+        setBasePacks(staticFallbackBasePacks);
+        setProducts(staticFallbackProducts);
       } finally {
         setIsLoading(false);
       }
@@ -181,7 +424,7 @@ const ProductPage: React.FC = () => {
         </div>
 
         {/* Spacer to offset the fixed header */}
-        <div className="h-[300px]"></div>
+        <div className="h-[200px] sm:h-[200px] md:h-[300px] lg:h-[400px] xl:h-[200px] mb-10"></div>
 
         {/* Content */}
         <div className="px-4">
@@ -215,16 +458,16 @@ const ProductPage: React.FC = () => {
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="pt-3 pb-2 px-1 space-y-2">
-                              <h3 className="text-[16px] font-semibold text-gray-900 truncate">{pack.name}</h3>
-                              <p className="text-[14px] text-gray-500 truncate">Basepack</p>
-                              <p className="text-pink-600 text-[16px] font-bold">₹{getItemPrice(pack)}/Day</p>
-                              <button
+                              <div className="pt-3 pb-2 px-1 space-y-2">
+                                <h3 className="text-[14px] font-semibold text-gray-900 truncate">{pack.name}</h3>
+                                <p className="text-[12px] text-gray-500 truncate">Basepack</p>
+                                <p className="text-pink-600 text-[14px] font-bold">₹{getItemPrice(pack)}/Day</p>
+                                <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleProductClick(pack);
                                 }}
-                                className="text-green-600 text-[16px] mb-3 font-medium block hover:text-green-700"
+                                className="text-green-600 text-[14px] mb-3 font-medium block hover:text-green-700"
                               >
                                 View
                               </button>
@@ -256,9 +499,9 @@ const ProductPage: React.FC = () => {
                               />
                             </div>
                             <div className="pt-3 pb-2 px-1 space-y-2">
-                              <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                              <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                              <p className="text-pink-600 text-[16px] font-bold">₹{getItemPrice(item)}/Day</p>
+                              <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                              <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                              <p className="text-pink-600 text-[14px] font-bold">₹{getItemPrice(item)}/Day</p>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -296,15 +539,15 @@ const ProductPage: React.FC = () => {
                               />
                             </div>
                             <div className="pt-3 pb-2 px-1 space-y-2">
-                              <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                              <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                              <p className="text-pink-600 text-[16px] font-bold">₹{getItemPrice(item)}/Day</p>
+                              <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                              <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                              <p className="text-pink-600 text-[14px] font-bold">₹{getItemPrice(item)}/Day</p>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleProductClick(item);
                                 }}
-                                className="text-green-600 text-[16px] mb-3 font-medium block hover:text-green-700"
+                                className="text-green-600 text-[14px] mb-3 font-medium block hover:text-green-700"
                               >
                                 View
                               </button>
@@ -336,15 +579,15 @@ const ProductPage: React.FC = () => {
                               />
                             </div>
                             <div className="pt-3 pb-2 px-1 space-y-2">
-                              <h3 className="text-[16px] font-semibold text-gray-900 truncate">{item.name}</h3>
-                              <p className="text-[14px] text-gray-500 truncate">{item.description}</p>
-                              <p className="text-pink-600 text-[16px] font-bold">₹{getItemPrice(item)}/Day</p>
+                              <h3 className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</h3>
+                              <p className="text-[12px] text-gray-500 truncate">{item.description}</p>
+                              <p className="text-pink-600 text-[12px] font-bold">₹{getItemPrice(item)}/Day</p>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleProductClick(item);
                                 }}
-                                className="text-green-600 text-[16px] mb-3 font-medium block hover:text-green-700"
+                                className="text-green-600 text-[14px] mb-3 font-medium block hover:text-green-700"
                               >
                                 View
                               </button>

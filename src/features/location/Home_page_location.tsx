@@ -194,6 +194,12 @@ const HomePageLocation: React.FC = () => {
       );
       
       setIsLocationServiced(isServiced);
+
+      console.log('Calling geocoder for:', lat, lng);
+      console.log('Geocoder result:', result);
+      console.log('selectedAddress set to:', {
+        city, district, state, pincode, fullAddress
+      });
     } catch (error) {
       // Only show user-friendly error message
     }
@@ -209,6 +215,52 @@ const HomePageLocation: React.FC = () => {
         return;
       }
 
+      // Validate required manual fields
+      console.log('Manual fields:', addressDetails, selectedLocationType);
+      if (!addressDetails.houseNo) {
+        console.error('Missing input: houseNo', addressDetails);
+        alert('Please enter your House/Flat Number.');
+        return;
+      }
+      if (!addressDetails.apartment) {
+        console.error('Missing input: apartment', addressDetails);
+        alert('Please enter your Area.');
+        return;
+      }
+      if (!addressDetails.directions) {
+        console.error('Missing input: directions', addressDetails);
+        alert('Please enter a Landmark or Directions.');
+        return;
+      }
+      if (!selectedLocationType) {
+        console.error('Missing input: selectedLocationType', selectedLocationType);
+        alert('Please select an Address Type (Home/Work/Others).');
+        return;
+      }
+
+      // Validate required auto fields from map
+      console.log('Auto fields:', selectedAddress);
+      if (!selectedAddress.city) {
+        console.error('Missing input: city', selectedAddress);
+        alert('City could not be detected from the map. Please move the pin to a valid location.');
+        return;
+      }
+      if (!selectedAddress.district) {
+        console.error('Missing input: district', selectedAddress);
+        alert('District could not be detected from the map. Please move the pin to a valid location.');
+        return;
+      }
+      if (!selectedAddress.state) {
+        console.error('Missing input: state', selectedAddress);
+        alert('State could not be detected from the map. Please move the pin to a valid location.');
+        return;
+      }
+      if (!selectedAddress.pincode || !/^[1-9][0-9]{5}$/.test(selectedAddress.pincode)) {
+        console.error('Missing or invalid input: pincode', selectedAddress);
+        alert('A valid 6-digit pincode could not be detected from the map. Please move the pin to a valid location.');
+        return;
+      }
+
       // Save to localStorage immediately
       localStorage.setItem('userLocation', locationSearchQuery);
       localStorage.setItem('userCoordinates', JSON.stringify(selectedPosition));
@@ -216,18 +268,18 @@ const HomePageLocation: React.FC = () => {
 
       // Prepare address data
       const addressData = {
+        name: localStorage.getItem('userName') || undefined,
         houseNo: addressDetails.houseNo || selectedAddress.fullAddress.split(',')[0] || '',
         streetName: addressDetails.apartment || selectedAddress.fullAddress.split(',')[1] || '',
         area: selectedAddress.fullAddress,
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        associatedPhoneNumber: localStorage.getItem('phoneNumber') || null,
         coordinates: `${selectedPosition.lat},${selectedPosition.lng}`,
-        pincode: selectedAddress.pincode || '000000',
+        pincode: selectedAddress.pincode,
         city: selectedAddress.city,
         district: selectedAddress.district,
         state: selectedAddress.state,
-        type: selectedLocationType || 'Home',
-        setAsDefault: true
       };
+      console.log('Final addressData to be sent:', addressData);
 
       // Navigate immediately if location is serviced
       if (isLocationServiced) {

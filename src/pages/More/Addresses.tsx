@@ -42,22 +42,6 @@ const Addresses: React.FC = () => {
     }
   };
 
-  const handleSetDefault = async (addressId: string) => {
-    try {
-      setActionInProgress(true);
-      setError(null);
-      await addressService.setDefaultAddress(addressId);
-      await loadAddresses(); // Reload addresses to get updated state
-    } catch (error: any) {
-      setError(error.message || 'Failed to set default address');
-      if (error.message.includes('login')) {
-        navigate('/login', { state: { returnUrl: location.pathname } });
-      }
-    } finally {
-      setActionInProgress(false);
-    }
-  };
-
   const handleDeleteClick = (addressId: string) => {
     setAddressToDelete(addressId);
     setShowDeleteModal(true);
@@ -233,7 +217,7 @@ const Addresses: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {addresses.sort((a, b) => (b.isDefault as any) - (a.isDefault as any)).map((address) => (
+                {addresses.map((address) => (
                   <div
                     key={address.id}
                     className="bg-white rounded-xl p-4 sm:p-6 shadow-sm sm:shadow-md"
@@ -242,11 +226,6 @@ const Addresses: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-3">
                           <h3 className="text-base sm:text-lg font-semibold text-gray-900">{address.type}</h3>
-                          {address.isDefault && (
-                            <span className="text-[10px] sm:text-xs bg-[#E0F2F7] text-[#0E7490] px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full font-medium">
-                              Default
-                            </span>
-                          )}
                           <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#ECFDF5] rounded-full flex items-center justify-center">
                             {address.type === 'Home' ? (
                               <FaHome className="text-[#0E7490] text-[10px] sm:text-xs" />
@@ -258,11 +237,13 @@ const Addresses: React.FC = () => {
                         <p className="text-gray-700 text-xs sm:text-sm">{address.houseNo}, {address.streetName}</p>
                         <p className="text-gray-700 text-xs sm:text-sm">{address.area}, {address.city}</p>
                         <p className="text-gray-700 text-xs sm:text-sm">{address.state} - {address.pincode}</p>
-                        <p className="text-gray-700 text-xs sm:text-sm mt-1 sm:mt-2">+91 {address.phoneNumber}</p>
+                        <p className="text-gray-700 text-xs sm:text-sm mt-1 sm:mt-2">
+                          📞 {address.associatedPhoneNumber || address.associatedPhoneNumber || 'N/A'}
+                        </p>
                       </div>
                       {address.coordinates ? (
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                        <AddressMap coordinates={address.coordinates} />
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center mx-auto">
+                          <AddressMap coordinates={address.coordinates} />
                         </div>
                       ) : (
                         <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -287,15 +268,6 @@ const Addresses: React.FC = () => {
                         <FaTrash className="text-sm" />
                         Delete
                       </button>
-                      {!address.isDefault && (
-                        <button
-                          onClick={() => handleSetDefault(address.id)}
-                          disabled={actionInProgress}
-                          className="flex-1 bg-[#F15A22] text-white py-2 sm:py-2.5 px-3 sm:px-5 rounded-full text-xs sm:text-sm font-medium hover:bg-[#F15A22]/90 disabled:opacity-50 min-w-[100px]"
-                        >
-                          {actionInProgress ? 'Setting...' : 'Set as Default'}
-                        </button>
-                      )}
                     </div>
                   </div>
                 ))}
